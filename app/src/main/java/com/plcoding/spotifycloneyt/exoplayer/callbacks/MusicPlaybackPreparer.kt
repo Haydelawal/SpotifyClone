@@ -24,14 +24,18 @@ class MusicPlaybackPreparer(
 
     override fun getSupportedPrepareActions(): Long {
 
-        return PlaybackStateCompat.ACTION_PREPARE_FROM_MEDIA_ID
+        return PlaybackStateCompat.ACTION_PREPARE_FROM_MEDIA_ID or
+                PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
     }
 
     override fun onPrepare(playWhenReady: Boolean) = Unit
 
 
     override fun onPrepareFromMediaId(mediaId: String, playWhenReady: Boolean, extras: Bundle?) {
-        TODO("Not yet implemented")
+        fireBaseMusicSource.whenReady {
+            val itemToPlay = fireBaseMusicSource.songs.find { mediaId == it.description.mediaId }
+            playerPrepared(itemToPlay)
+        }
     }
 
     override fun onPrepareFromSearch(query: String, playWhenReady: Boolean, extras: Bundle?) = Unit
